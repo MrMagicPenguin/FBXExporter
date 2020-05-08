@@ -1,43 +1,63 @@
+bl_info = {
+    "name": "FBX Batch Exporter",
+    "blender": (2, 80, 75),
+    "category": "Object",
+
+}
+
 # exports each selected object into its own file
 
 import bpy
 import os
 
-# export to blend file location
-basedir = os.path.dirname(bpy.data.filepath)
-
-if not basedir:
-    raise Exception("Blend file is not saved")
-
-view_layer = bpy.context.view_layer
-
-obj_active = view_layer.objects.active
-selection = bpy.context.selected_objects
-
-bpy.ops.object.select_all(action='DESELECT')
-
-for obj in selection:
-
-    obj.select_set(True)
-
-    # some exporters only use the active object
-    view_layer.objects.active = obj
-
-    name = bpy.path.clean_name(obj.name)
-    fn = os.path.join(basedir, name)
+class FBXBatchExporter(bpy.types.Operator):
+    """FBX Batch Exporter"""
+    bl_idname = "object.fbx_batch_exporter"
+    bl_label = "FBX Batch Exporter"
+    bl_options = {'REGISTER', 'UNDO'}
     
-    # bpy.ops.apply_scale_options('FBX_SCALE_UNITS')
-    bpy.ops.export_scene.fbx(filepath=fn + ".fbx", use_selection=True, object_types={'MESH'}, apply_scale_options='FBX_SCALE_UNITS')
+    def execute(self, context):
 
-    # Can be used for multiple formats
-    # bpy.ops.export_scene.x3d(filepath=fn + ".x3d", use_selection=True)
+        # export to blend file location
+        # Change this to be a user defined path
+        basedir = os.path.dirname(bpy.data.filepath)
 
-    obj.select_set(False)
+        view_layer = bpy.context.view_layer
 
-    print("written:", fn)
+        obj_active = view_layer.objects.active
+        selection = bpy.context.selected_objects
+
+        # Primary operator
+        bpy.ops.object.select_all(action='DESELECT')
+
+        for obj in selection:
+
+            obj.select_set(True)
+
+            name = bpy.path.clean_name(obj.name) # Remove any funky characters
+            fn = os.path.join(basedir, name)
+            
+            # Export in .FBX, only Meshes, apply scale using FBX Scale Units
+            bpy.ops.export_scene.fbx(filepath=fn + ".fbx", use_selection=True, object_types={'MESH'}, apply_scale_options='FBX_SCALE_UNITS')
+
+            obj.select_set(False)
+
+            print("written:", fn) # Print what we wrote
 
 
-view_layer.objects.active = obj_active
+        view_layer.objects.active = obj_active
 
-for obj in selection:
-    obj.select_set(True)
+        for obj in selection:
+            obj.select_set(True)
+            
+        return {'FINISHED'}
+
+def register():
+    bpy.utils.register_class(FBXBatchExporter)
+
+def unregister():
+    bpy.utils.unregister_class(FBXBatchExporter)
+    
+if __name__ == "__main__":
+    register()
+
