@@ -4,7 +4,6 @@ import os
 #----------------------------------
 # Properties for our exporter panel
 #----------------------------------
-
 class PathProperties(PropertyGroup):
     path : StringProperty(
         name="Export Directory Path",
@@ -23,11 +22,14 @@ def swap_axis():
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)                                              # Apply rotation
         bpy.ops.transform.rotate(value=1.5708, orient_axis='X', orient_type='GLOBAL', constraint_axis=(True, False, False))     # Rotate 90d in radians
 
-# export to blend file location
-def export_fbx(self, context):
-    basedir = os.path.dirname(bpy.data.filepath)    # Change this to be a user defined path
-    view_layer = bpy.context.view_layer
 
+def export_fbx(self, context):
+    # TODO: Change this to be a user defined path
+    basedir = os.path.dirname(bpy.data.filepath) 
+       
+    view_layer = bpy.context.view_layer
+    
+    # Define selection
     obj_active = view_layer.objects.active
     selection = bpy.context.selected_objects
 
