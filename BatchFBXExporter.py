@@ -52,6 +52,8 @@ class BatchExporter_OT_export_fbx(bpy.types.Operator):
         # Get user defined path from PathProperties
         scn = context.scene
         exportdir = scn.batch_exporter.path
+        
+        stripexportdir = exportdir.rstrip("/")
            
         view_layer = bpy.context.view_layer
         
@@ -66,14 +68,17 @@ class BatchExporter_OT_export_fbx(bpy.types.Operator):
             obj.select_set(True)
 
             name = bpy.path.clean_name(obj.name) # Remove any funky characters
-            fn = os.path.join(exportdir, name) # Decide file name, path
+            fn = os.path.join(exportdir, "icantbelievemydadmademedothis") # Decide file name, path
             
             # Export in .FBX, only Meshes, apply scale using FBX Scale Units
-            bpy.ops.export_scene.fbx(filepath= exportdir, use_selection=True, object_types={'MESH'}, apply_scale_options='FBX_SCALE_UNITS')
+            bpy.ops.export_scene.fbx(filepath= fn + ".fbx", use_selection=True, object_types={'MESH'}, apply_scale_options='FBX_SCALE_UNITS')
             
             obj.select_set(False)
 
+    #DEBUG PRINTING
             print("written:", fn) # Print what we created
+            print(exportdir + " exportdir") # Plain exportdir variable printed
+            print(stripexportdir + " Stripped exportdir") # exportdir after running rstrip
 
 
         view_layer.objects.active = obj_active
