@@ -1,3 +1,15 @@
+bl_info = {
+    "name": "FBX Batcher",
+    "description": "Description of this addon",
+    "author": "Rug.",
+    "version": (0, 0, 1),
+    "blender": (2, 9, 0),
+    "location": "View3D",
+    "warning": "This addon is still in development.",
+    "wiki_url": "",
+    "category": "Import-Export" }
+    
+
 import os
 import bpy
 from bpy.props import (
@@ -130,11 +142,11 @@ def register():
         
     bpy.types.Scene.batch_exporter = PointerProperty(type=PathProperties)
     
-    def unregister():
-        from bpy.utils import unregister_class
-        for cls in reversed(classes):
-            unregister_class(cls)
-        del bpy.types.Scene.fbx_exporter
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+    del bpy.types.Scene.fbx_exporter
         
 if __name__ == "__main__":
     register()
